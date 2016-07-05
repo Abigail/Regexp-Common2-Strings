@@ -20,6 +20,7 @@ my  $REPO_HOST    =  'github.com';
 my  $ME           =  'Abigail';
 my  $REPOSITORY   =  "git://$REPO_HOST/$ME/$REPO.git";
 
+my  @tests        = qw [t/*.t];
 
 my %args = (
     NAME                 =>  $PACKAGE,
@@ -33,25 +34,46 @@ my %args = (
     AUTHOR               =>  "$ME <$LOCAL_ADDR\@$DOMAIN>",
     LICENSE              =>  'mit',
     META_MERGE           => {
-        test_requires    => {
-            'strict'             => 0,
-            'warnings'           => 0,
-            'Test::More'         => 0.88,
+       "meta-spec"       => {version => 2},
+        prereqs          => {
+            configure        => {
+                requires         => {
+                    'ExtUtils::MakeMaker'   =>  0,
+                    'strict'                =>  0,
+                    'warnings'              =>  0,
+                },
+            },
+            runtime          => {
+                requires         => {
+                    'strict'                =>  0,
+                    'warnings'              =>  0,
+                    'Regexp::Common2'       =>  0,
+                },
+            },
+            test             => {
+                requires         => {
+                    'strict'                =>  0,
+                    'warnings'              =>  0,
+                    'Regexp::Common2'       =>  0,
+                    'Test::More'            =>  0.88,
+                    'Test::Regexp'          =>  0,
+                },
+                recommends   => {
+                    'Test::NoWarnings'      =>  0,
+                },
+            },
         },
         resources        => {
             repository   => $REPOSITORY,
         },
         keywords         => [qw [ ]],
     },
+    test                 => {
+        TESTS                => $^O eq 'MSWin32'
+                                ? "@{[map {glob} @tests]}" : "@tests"
+    },
 );
 
-$args {META_MERGE} {build_requires} ||= {
-    'ExtUtils::MakeMaker' =>  0,
-    %{$args {META_MERGE} {test_requires}}
-};
-
-$args {META_MERGE} {configure_requires} ||=
-    $args {META_MERGE} {build_requires};
 
 my %filter = (
     MIN_PERL_VERSION     => '6.48',
