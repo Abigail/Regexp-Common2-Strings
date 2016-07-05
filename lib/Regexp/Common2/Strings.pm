@@ -1,9 +1,12 @@
 package Regexp::Common2::Strings;
 
-use 5.010;
+use 5.20.0;
 use strict;
 use warnings;
 no  warnings 'syntax';
+
+use feature  'signatures';
+no  warnings 'experimental::signatures';
 
 our $VERSION = '2016070501';
 
