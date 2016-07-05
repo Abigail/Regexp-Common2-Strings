@@ -10,6 +10,101 @@ no  warnings 'experimental::signatures';
 
 our $VERSION = '2016070501';
 
+use Regexp::Common2 qw [pattern];
+
+my %styles = (
+    quoted   =>   [q {"'`}, undef, q {\\}],
+    m4       =>   [q {`},   q {'}, undef],
+);
+
+sub make_delimited (%args) {
+    my @patterns;
+
+    my @todo;
+
+    if (defined $args {-style}) {
+        foreach my $style (split /,\s*/ => $args {-style}) {
+            if (my $triplet = $styles {$style}) {
+                push @todo => $triplet;
+            }
+            else {
+                require Carp;
+                my $name = $args {-Name};
+                Carp::carp ("Ignoring unknown style '-style' when " .
+                            "constructing a $name pattern");
+            }
+        }
+    }
+    unless (@todo) {
+        my $delimiters    = $args {-delimeters};
+        my $esc           = $args {-esc}         // "";
+        my $cdelimiters   = $args {-cdelimiters} // "";
+        push @todo => [$delimiters, $cdelimiters, $esc];
+    }
+
+    foreach my $triplet (@todo) {
+        my ($delimiters, $cdelimiters, $esc) = @$triplet;
+
+        $cdelimiters      = $delimiters unless length $delimiters;
+
+        my $l_delimiters  = length $delimiters;
+        my $l_esc         = length $esc;
+        my $l_cdelimiters = length $cdelimiters;
+
+        #
+        # Normalize length
+        #
+        if ($l_esc && $l_esc < $l_delimiters) {
+            $esc .= substr ($esc, -1) x ($l_delimiters - $l_esc);
+            $l_esc = $l_delimiters;
+        }
+        if (!$l_cdelimiters) {
+            $cdelimiters = $delimiters;
+            $l_cdelimiters = $l_delimiters;
+        }
+        elsif ($l_cdelimiters < $l_delimiters) {
+            $cdelimiters .= substr ($cdelimiters, -1) x
+                                   ($l_delimiters - $l_cdelimiters);
+            $l_cdelimiters = $l_delimiters;
+        }
+
+        foreach my $index (0 .. ($l_delimiters - 1)) {
+            my $o = quotemeta substr   ($delimiters, $index, 1);
+            my $c = quotemeta substr  ($cdelimiters, $index, 1);
+            my $e = $l_esc ? quotemeta substr ($esc, $index, 1) : "";
+
+            if ($e eq "") {
+                #
+                # Not escaped
+                #
+                push @patterns =>
+                     "(?k<odelimiter>:$o)[^$c]*(?k<cdelimiter>:$c)";
+            }
+            elsif ($e eq $c) {
+                ...
+            }
+            else {
+                push @patterns =>
+                     "(?k<odelimiter>:$o)"                        .
+                     "(?k<string>:[^$e$c]*(?:$e(?s:.)[^$e$o]*)*)" .
+                     "(?k<cdelimiter>:$c)";
+            }
+        }
+    }
+    local $" = "|";
+    "(?k<delimited>:(?|@patterns))";
+}
+
+pattern "string::delimited",
+        -config  => {
+            -delimeters  => q {"'`},
+            -esc         => q {\\},
+            -cdelimiters => undef,
+            -style       => undef,
+        },
+        -pattern => \&make_delimited,
+;
+
 
 1;
 

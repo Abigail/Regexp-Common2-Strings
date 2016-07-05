@@ -2,6 +2,7 @@ lib/Regexp/Common2/Strings.pm
 Makefile.PL
 MANIFEST
 t/000-basic.t
+t/101-delimited_no_args.t
 t/950-pod.t
 t/960-pod_coverage.t
 t/980-versions.t
