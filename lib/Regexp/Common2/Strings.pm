@@ -37,13 +37,14 @@ sub make_delimited (%args) {
     }
 
     #
-    # If the -style parameter doesn't work out, use the other parameters,
-    # including the defaults.
+    # If the -style parameter doesn't work out, use the other parameters;
+    # if none given, use default.
     #
-    unless (@todo) {
-        my $delimiters    = $args {-delimeters};
-        my $esc           = $args {-esc}         // "";
+    if (!@todo || exists $args {-delimiters}) {
+        my $delimiters    = $args {-delimeters}  // q {"'`};
+        my $esc           = $args {-esc}         // q {\\};
         my $cdelimiters   = $args {-cdelimiters} // "";
+
         push @todo => [$delimiters, $cdelimiters, $esc];
     }
 
@@ -101,8 +102,8 @@ sub make_delimited (%args) {
 
 pattern "string::delimited",
         -config  => {
-            -delimeters  => q {"'`},
-            -esc         => q {\\},
+            -delimeters  => undef,
+            -esc         => undef,
             -cdelimiters => undef,
             -style       => undef,
         },
