@@ -21,7 +21,7 @@ my $pat_k = RE 'string::delimited', -esc => "", -Keep => 1;
 my $test  = Test::Regexp:: -> new -> init (
                 pattern      => $pat,
                 keep_pattern => $pat_k,
-                name         => "string::delimited",
+                name         => "string::delimited, no escape char",
 );
 
 foreach my $delim (q {"}, q {'}, q {`}) {
