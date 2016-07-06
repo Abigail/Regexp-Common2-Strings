@@ -78,22 +78,21 @@ sub make_delimited (%args) {
             my $c = quotemeta substr  ($cdelimiters, $index, 1);
             my $e = $l_esc ? quotemeta substr ($esc, $index, 1) : "";
 
+            my $string_pat;
+
             if ($e eq "") {
-                #
-                # Not escaped
-                #
-                push @patterns =>
-                     "(?k<odelimiter>:$o)[^$c]*(?k<cdelimiter>:$c)";
+                $string_pat = "[^$c]*";
             }
             elsif ($e eq $c) {
-                ...
+                ...;
             }
             else {
-                push @patterns =>
-                     "(?k<odelimiter>:$o)"                        .
-                     "(?k<string>:[^$e$c]*(?:$e(?s:.)[^$e$o]*)*)" .
-                     "(?k<cdelimiter>:$c)";
+                $string_pat = "[^$e$c]*(?:$e(?s:.)[^$e$o]*)*";
             }
+
+            push @patterns => "(?k<odelimiter>:$o)"      .
+                              "(?k<string>:$string_pat)" .
+                              "(?k<cdelimiter>:$c)";
         }
     }
     local $" = "|";
