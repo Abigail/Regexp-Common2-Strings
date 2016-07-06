@@ -35,6 +35,11 @@ sub make_delimited (%args) {
             }
         }
     }
+
+    #
+    # If the -style parameter doesn't work out, use the other parameters,
+    # including the defaults.
+    #
     unless (@todo) {
         my $delimiters    = $args {-delimeters};
         my $esc           = $args {-esc}         // "";
