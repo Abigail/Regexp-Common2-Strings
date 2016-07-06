@@ -85,7 +85,7 @@ sub make_delimited (%args) {
                 $string_pat = "[^$c]*";
             }
             elsif ($e eq $c) {
-                ...;
+                $string_pat = "[^$c]*(?:$c$c\[^$c]*)*";
             }
             else {
                 $string_pat = "[^$e$c]*(?:$e(?s:.)[^$e$o]*)*";
