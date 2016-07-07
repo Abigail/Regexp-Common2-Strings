@@ -9,7 +9,7 @@ t/113-delimited_escape_multi.t
 t/114-delimited_escape_same.t
 t/950-pod.t
 t/960-pod_coverage.t
-t/980-versions.t
+t/980-version.t
 t/981-permissions.t
 t/982-git.t
 t/990-ascii.t
