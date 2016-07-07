@@ -2,4 +2,3 @@
 .gitignore
 MANIFEST.SKIP
 Releases
-test_all
