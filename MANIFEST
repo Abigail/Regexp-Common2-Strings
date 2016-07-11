@@ -7,7 +7,7 @@ t/111-delimited_escape_none.t
 t/112-delimited_escape.t
 t/113-delimited_escape_multi.t
 t/114-delimited_escape_same.t
-t/121-delimiters_single.t
+t/121-delimited_delimiters_single.t
 t/950-pod.t
 t/960-pod_coverage.t
 t/980-version.t
